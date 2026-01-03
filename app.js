@@ -23,12 +23,20 @@ const brickPadding = 10;
 const brickOffsetTop = 30;
 const brickOffsetLeft = 30;
 
+let score = 0;
+
 let bricks = []
 for(let c = 0; c < brickColumnCount; c++){
     bricks[c] = [];
     for (let r = 0; r < brickRowCount; r++){
         bricks[c][r] = { x: 0, y: 0, status: 1 }
     }
+}
+
+function drawScore(){
+    ctx.font = "16px Arial";
+    ctx.fillStyle = "#0095DD";
+    ctx.fillText(`Score: ${score}`, 8, 20);
 }
 
 function drawBricks(){
@@ -62,6 +70,12 @@ function collisionDetection() {
                 ){
                     dy = -dy;
                     b.status = 0;
+                    score++;
+                    if(score === brickRowCount * brickColumnCount){
+                        alert("YOU WIN, CONGRATS!");
+                        document.location.reload();
+                        clearInterval(interval);
+                    }
                 }
             }
         }
@@ -82,6 +96,7 @@ function draw() {
     drawBricks();
     collisionDetection();
     drawPaddle();
+    drawScore();
     x += dx;
     y += dy;
 
@@ -142,5 +157,13 @@ function keyUpHandler(e){
     }
 }
 
+function mouseMoveHandler(e){
+    const relativeX = e.clientX - canvas.offsetLeft;
+    if(relativeX > 0 && relativeX < canvas.width){
+        paddleX = relativeX - paddleWidth / 2;
+    }
+}
+
 document.addEventListener("keydown", keyDownHandler);
 document.addEventListener("keyup", keyUpHandler);
+document.addEventListener("mousermove", mouseMoveHandler)
